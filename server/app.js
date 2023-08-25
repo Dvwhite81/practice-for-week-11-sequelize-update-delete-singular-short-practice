@@ -20,14 +20,44 @@ app.get('/puppies', async (req, res, next) => {
 
 // STEP 1: Update a puppy by id
 app.put('/puppies/:puppyId', async (req, res, next) => {
-    // Your code here
-})
+    const puppy = await Puppy.findOne({
+        where: {
+            id: req.params.puppyId
+        }
+    });
+
+    const { ageYrs, weightLbs, microchipped } = req.body;
+
+    puppy.set({
+        ageYrs: (ageYrs !== undefined) ? ageYrs : puppy.ageYrs,
+        weightLbs: (weightLbs !== undefined) ? weightLbs : puppy.weightLbs,
+        microchipped: (microchipped !== undefined) ? microchipped : puppy.microchipped
+    });
+
+    await puppy.save();
+
+    res.json({
+        message: `Successfully updated puppy with id ${req.params.puppyId}.`,
+        puppy: puppy
+    });
+});
 
 
 // STEP 2: Delete a puppy by id
 app.delete('/puppies/:puppyId', async (req, res, next) => {
-    // Your code here
-})
+    const puppy = await Puppy.findOne({
+        where: {
+            id: req.params.puppyId
+        }
+    });
+
+    await puppy.destroy();
+
+    res.json({
+        message: `Successfully deleted puppy with id ${req.params.puppyId}.`,
+        puppy
+    });
+});
 
 
 // Root route - DO NOT MODIFY
